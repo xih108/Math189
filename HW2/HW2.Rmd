@@ -1,0 +1,155 @@
+<div>Runye Hu A13410385</div>
+<div>Yijie Fan A13485989</div>
+<div>Xinyi He A13561164</div>
+<div>Yifan Wu A14060535</div>
+<div>Yiwen Cai A13530685</div>
+
+
+---
+title: "HW2"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+###Problem1
+###Nutrient data
+```{r}
+nutrient=read.table("https://www.math.ucsd.edu/~wez243/data/nutrient.txt")
+nutrient$V1=NULL
+colnames(nutrient)=c("Calcium", "Iron", "Protein", "Vitamin A", "Vitamin C")
+```
+
+###Q1:
+```{r}
+means <- colMeans(nutrient, na.rm = TRUE)
+print(means)
+sd <- apply(nutrient, 2, function(x) sd(x, na.rm = TRUE))
+print(sd)
+```
+
+###Q2:
+```{r}
+intake = c(1000,15,60,800,75)
+p_val = c();
+for (i in 1:ncol(nutrient)){
+  p = t.test(nutrient[i],alternative = c("two.sided"),mu = intake[i], paired = FALSE,conf.level = 0.95)$p.value
+  p_val = c(p_val,p)
+}
+p_val
+ans = p_val > matrix(0.05,1,ncol(nutrient))
+ans
+```
+
+###Q3:
+<div>For Calcium, Iron, Protein we reject the hypotheses that the population mean of that variable equals the recommended values because their p-value are less than significance level.</div> 
+<div>For VitaminA and VitaminC, we don't have enough evidence to reject because their p-value are larger than significance level. Therefore, we conclude that the US women don't meet the recommended nutrient intake amount. </div>
+<div>My recommendation is that US women should intake more food with rich Calcium and Iron while intaking a little bit less protein.</div>
+
+
+###Problem2
+###Multiple data
+```{r}
+multiple = read.table("~/Downloads/multiple.txt");
+```
+
+###Q1:
+```{r}
+p_val = c()
+ans = c()
+for (i in 1:50){
+  p = t.test(multiple[i], alternative = c("two.sided"),mu = 0,paired = FALSE,conf.level = 0.9)$p.value
+  p_val = c(p_val,p)
+}
+p_val
+ans = p_val > matrix(0.1,1,50)
+ans
+```
+So the population mean vector doesn't equal to a vector whose elements are all zeros.
+
+###Q2:
+```{r}
+type1 = 4
+type1
+type2 = 0
+type2
+FWER = 1-(1-0.1)^50
+FWER
+FDP = type1/(50-sum(ans))
+FDP
+```
+<div>Number of Type 1 Error: 4</div>
+<div>Number of Type 2 Error: 0</div>
+<div>FWER: 0.9948462</div>
+<div>FDP: 0.2857143</div>
+
+###Q3:
+```{r}
+p_B = c()
+ans_B = c()
+for (i in 1:50){
+  p = t.test(multiple[i], alternative = c("two.sided"),mu = 0,paired = FALSE,conf.level = 0.9)$p.value
+  p_B = c(p_B,p)
+}
+p_B
+ans_B = p_B > matrix(0.1/50,1,50)
+ans_B
+FWER = 1-(1-0.1/50)^50
+FWER
+power = 10/10
+power
+```
+<div>FWER:0.09525318</div>
+<div>power:1 </div>
+
+###Q4:
+```{r}
+p_value = c()
+ans_BH = c()
+for (i in 1:50){
+  p = t.test(multiple[i], alternative = c("two.sided"),mu = 0,paired = FALSE,conf.level = 0.9)$"p.value"
+  p_value = c(p_value,p)
+}
+
+bh <- function(p,alpha)
+{
+  m <- length(p)
+  l <- alpha*c(1:m)/m
+  result <- matrix(TRUE,1,m)
+  sort_p <- sort(p) 
+  set <- which(l>=sort_p)
+  if(length(set)==0){
+    rej <- set
+  } else{
+    imax <- max(set)
+    threshold <- sort_p[imax]
+    rej <- which(p <= threshold)
+  }
+  result[rej] = FALSE;
+  
+  outlist<-list(result = result)
+  return(outlist)
+}
+
+bh_test <- bh(p_value,0.1)
+p_value
+ans_BH = bh_test$result
+ans_BH
+```
+
+```{r}
+FDP = 0/sum(ans_BH)
+FDP
+power = 10/10
+power
+```
+<div>FDP: 0 </div>
+<div>power:1 </div>
+<div>By using BH method, we improve from the result of naive multiple testing and multiple testing with Bonferroni method.</div>
+<div>In 2.1(naive multiple testing part), we have 4 Type I error, while we make no Type I error using BH method. </div>
+<div>For 2.3 and 2.4, type I and type II errors are the same(we make no errors), and thus they both work good for this case.</div>

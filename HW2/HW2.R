@@ -12,25 +12,14 @@ print(sd)
 
 
 #Q2:
-t.test(nutrient$Calcium,
-       alternative = c("two.sided"),
-       mu = 1000, paired = FALSE,conf.level = 0.95)
+intake = c(1000,15,60,800,75)
+for (i in 1:ncol(nutrient)){
+  t.test(nutrient[i],
+             alternative = c("two.sided"),
+             mu = intake[i], paired = FALSE,conf.level = 0.95)
+  print(t)
+}
 
-t.test(nutrient$Iron,
-       alternative = c("two.sided"),
-       mu = 15, paired = FALSE,conf.level = 0.95)
-
-t.test(nutrient$Protein,
-       alternative = c("two.sided"),
-       mu = 60, paired = FALSE,conf.level = 0.95)
-
-t.test(nutrient$"Vitamin A",
-       alternative = c("two.sided"),
-       mu = 800, paired = FALSE,conf.level = 0.95)
-
-t.test(nutrient$"Vitamin C",
-       alternative = c("two.sided"),
-       mu = 75, paired = FALSE,conf.level = 0.95)
 
 #Q3:?????
 
