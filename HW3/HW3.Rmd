@@ -1,0 +1,97 @@
+---
+title: "HW3"
+output: html_document
+---
+
+
+<div>Runye Hu A13410385</div>
+<div>Yijie Fan A13485989</div>
+<div>Xinyi He A13561164</div>
+<div>Yifan Wu A14060535</div>
+<div>Yiwen Cai A13530685</div>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###Problem1
+###Q1:
+```{r}
+water = read.table("water.txt" )
+t.test(water[,1], water[,2], paired = TRUE, alternative = "two.sided")$p.value
+```
+<div>Conclusion: As the p-value is less than the significant level (alpha=0.5), we reject the null hypothesis.Thus, the water has different zinc concentrations in the bottom and the surface.</div>
+
+
+###Q2:
+<div>For the assumption of normality, if the dataset is very small and we don't hold the normality for the two-sample test, saying that the data we have are not normally distributed, then the statistic we get doesn’t fit the F distribution so it does't make sense here. Consequently, without satisfying the assumption, the result will be wrong and meaningless.</div>
+
+
+
+###Problem2
+###Q1:
+```{r}
+library("HSAUR3")
+data("pottery")
+
+pottery_new = pottery[which(pottery$kiln != 3),]
+F_stat = c()
+F_stat = c(F_stat, unlist(summary(aov(Al2O3 ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat,unlist(summary(aov(Fe2O3 ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat, unlist(summary(aov(MgO ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat, unlist(summary(aov(CaO ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat, unlist(summary(aov(Na2O ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat, unlist(summary(aov(K2O ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat, unlist(summary(aov(TiO2 ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat, unlist(summary(aov(MnO ~ kiln, data = pottery_new)))[7])
+F_stat =  c(F_stat, unlist(summary(aov(BaO ~ kiln, data = pottery_new)))[7])
+F_stat
+```
+
+###Q2:
+```{r}
+Pr_F = c()
+Pr_F = c(Pr_F, unlist(summary(aov(Al2O3 ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F,unlist(summary(aov(Fe2O3 ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F, unlist(summary(aov(MgO ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F, unlist(summary(aov(CaO ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F, unlist(summary(aov(Na2O ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F, unlist(summary(aov(K2O ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F, unlist(summary(aov(TiO2 ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F, unlist(summary(aov(MnO ~ kiln, data = pottery_new)))[9])
+Pr_F =  c(Pr_F, unlist(summary(aov(BaO ~ kiln, data = pottery_new)))[9])
+Pr_F
+Pr_F > matrix(0.05/9,1,9)
+
+```
+Conclusion: Since we get the p-value for the first eight chemical compositions are less than the significant level(alpha=0.05), we reject the null hyphosis for the first eight tests. In the nineth test, we get the p-value for BaO is bigger than 0.5, so we do not reject the null hypothesis. As the null hypothesis concerns all nine chemical compositions and there is one case being rejected, we reject the H0: mu1=mu2=mu4=mu5. We may conclude that there is at least one pair of regions that is different on at least one chmical. Also, the difference in sites can affect the chemical composition of Romano-British pottery relates.
+
+
+###Q3:
+```{r}
+bh <- function(p,alpha)
+{
+  m <- length(p)
+  l <- alpha*c(1:m)/m
+  result <- matrix(TRUE,1,m)
+  sort_p <- sort(p) 
+  set <- which(l>=sort_p)
+  if(length(set)==0){
+    rej <- set
+  } else{
+    imax <- max(set)
+    threshold <- sort_p[imax]
+    rej <- which(p <= threshold)
+  }
+  result[rej] = FALSE;
+  
+  outlist<-list(result = result)
+  return(outlist)
+}
+
+bh_test <- bh(Pr_F,0.05)
+bh_test
+```
+Conclusion: P-values do not change in Q2.2 and Q2.3, so similar to Q2.2, we reject the null hyphosis for the first eight tests and do not reject the null hypothesisthe for the nineth test. We may conclude that there is at least one pair of regions that is different on Al2O3, Fe2O3, MgO, CaO, Na2O, K2O, TiO2 and MnO. Also, the difference in sites can affect these eight chemical compositions in Romano-British pottery relates. Meanwhile, the difference in sites may not affect the composition of BaO in the pottery.
+
