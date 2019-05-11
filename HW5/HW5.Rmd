@@ -1,0 +1,92 @@
+---
+title: "HW5"
+output: html_document
+---
+
+<div>Runye Hu A13410385</div>
+<div>Yijie Fan A13485989</div>
+<div>Xinyi He A13561164</div>
+<div>Yifan Wu A14060535</div>
+<div>Yiwen Cai A13530685</div>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+############## Load Data ##############
+library(datasets)
+data(iris)
+```
+
+### Q1
+```{r}
+dist<- dist(iris[1:4], method = "euclidean")
+hc.average <- hclust (dist, method ="average")
+clusterCut = cutree(hc.average, 3)
+
+plot(hc.average , main=" Dendrogram: Average Linkage ",
+xlab="", sub ="", cex =1.5 , hang = -1)
+
+truth = as.numeric(iris$Species)
+correct_rate = sum(truth == clusterCut)/length(truth)
+```
+
+```{r}
+correct_rate
+```
+
+
+### Q2.1
+```{r}
+dist<- dist(iris[1:4], method = "manhattan")
+hc.average <- hclust (dist, method ="average")
+clusterCut = cutree(hc.average, 3)
+
+plot(hc.average , main=" Dendrogram: Average Linkage ",
+xlab="", sub ="", cex =1.5 , hang = -1)
+
+truth = as.numeric(iris$Species)
+
+correct_rate = sum(truth == clusterCut)/length(truth)
+```
+```{r}
+correct_rate
+```
+
+
+### Q2.2
+```{r}
+dist<- dist(iris[1:4], method = "euclidean")
+hc.single <- hclust (dist, method ="single")
+clusterCut = cutree(hc.single, 3)
+
+plot(hc.average , main=" Dendrogram: Single Linkage ",
+xlab="", sub ="", cex =1.5 , hang = -1)
+
+truth = as.numeric(iris$Species)
+correct_rate = sum(truth == clusterCut)/length(truth)
+```
+
+```{r}
+correct_rate
+```
+
+
+### Q2.3
+```{r}
+data = scale(iris[1:4])  
+dist<- dist(data, method = "euclidean")
+hc.average <- hclust (dist, method ="average")
+clusterCut = cutree(hc.average, 3)
+
+plot(hc.average , main=" Dendrogram: Average Linkage ",
+xlab="", sub ="", cex =1.5 , hang = -1)
+
+truth = as.numeric(iris$Species)
+correct_rate = sum(truth == clusterCut)/length(truth)
+```
+```{r}
+correct_rate
+```
+
