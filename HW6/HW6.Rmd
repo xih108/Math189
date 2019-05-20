@@ -1,0 +1,109 @@
+---
+title: "HW6"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+names = c("Climate and Terrain","Housing","Health Care & the Environment",
+          "Crime","Transportation","Education","The Arts","Recreation",
+          "Economics","index")
+data <- read.table("Places_Rated.txt")
+colnames(data) <- names
+```
+
+### Q1
+#### SCALED
+```{r}
+pca_result = prcomp(data[,][1:9] , scale = TRUE)
+eigen_val = (pca_result$sdev)^2
+eigen_vec = pca_result$rotation
+eigen_val
+eigen_vec
+```
+
+```{r}
+pve = eigen_val/sum(eigen_val)
+print("Proportion of Variance Explained")
+print(pve)
+```
+
+```{r}
+plot(pve, xlab=" Principal Component ", ylab=" Proportion of
+Variance Explained ", ylim=c(0,1), xaxt="n" ,type='b', col="blue", cex=1,
+pch=20, cex.lab= 0.5)
+axis(1, at=c(1:9),labels=c(1:9))
+```
+
+```{r}
+cum_pve = cumsum (pve)
+print("Cumulative Proportion of Variance Explained")
+print(cum_pve)
+```
+
+```{r}
+plot(cum_pve, xlab=" Principal Component ", ylab=" Cumulative Proportion of
+Variance Explained ", ylim=c(0,1), xaxt="n" ,type='b', col="blue", cex=1,
+pch=20, cex.lab=0.5)
+axis(1, at=c(1:9),labels=c(1:9))
+```
+
+#### RAW
+```{r}
+pca_result1 = prcomp(data[,][1:9] , scale = FALSE)
+eigen_val1 = (pca_result1$sdev)^2
+eigen_vec1 = pca_result1$rotation
+eigen_val1
+eigen_vec1
+```
+
+```{r}
+pve1 = eigen_val1/sum(eigen_val1)
+print("Proportion of Variance Explained")
+print(pve1)
+```
+
+```{r}
+plot(pve1, xlab=" Principal Component ", ylab=" Proportion of
+Variance Explained ", ylim=c(0,1), xaxt="n" ,type='b', col="blue", cex=1,
+pch=20, cex.lab=0.5)
+axis(1, at=c(1:9),labels=c(1:9))
+```
+
+```{r}
+cum_pve1 = cumsum (pve1)
+print("Cumulative Proportion of Variance Explained")
+print(cum_pve1)
+```
+
+```{r}
+plot(cum_pve1, xlab=" Principal Component ", ylab=" Cumulative Proportion of
+Variance Explained ", ylim=c(0,1), xaxt="n" ,type='b', col="blue", cex=1,
+pch=20, cex.lab=0.5)
+axis(1, at=c(1:9),labels=c(1:9))
+```
+<div>Answer:</div>
+For the raw data, the first principal component loading vector puts large weight on V7, and the second principal component loading vector puts large weight on V2. In addition, in the raw data PCA, the first component explains about 80% of the total variation. While in the result of scaled data, principal component loading vectors put weight on variables more equally, and the first component explains much less of the variation than the first one in unscaled PCA.
+
+
+
+### Q2
+```{r}
+#choose k = 5
+loading_vec = pca_result$rotation[,5]
+loading_vec
+```
+```{r}
+library(ggfortify)
+PC1 = pca_result$rotation[,1]
+PC2 = pca_result$rotation[,2]
+d = data.frame(pca_result$rotation)
+plot_0 = autoplot(pca_result, data = data, colour = 'black')
+plot_0+ theme_grey(base_size = 22)
+```
+
+
+
