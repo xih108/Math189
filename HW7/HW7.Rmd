@@ -1,0 +1,80 @@
+---
+title: "HW7"
+output: html_document
+---
+<div>Runye Hu A13410385</div>
+<div>Yijie Fan A13485989</div>
+<div>Xinyi He A13561164</div>
+<div>Yifan Wu A14060535</div>
+<div>Yiwen Cai A13530685</div>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data = read.csv("baseball_5.csv")
+```
+### Q1
+```{r}
+plot(data$Hits,data$Salary, main="Scatterplot between Hits and Salary", xlab="Hits", ylab="Salary",pch = 20)
+```
+
+```{r}
+slm.fit =lm(Salary ~ Hits,data=data)
+#regression coefficients,standard errors
+summary(slm.fit)$coefficients[,1:2]
+plot(data$Hits,data$Salary, main="Scatterplot between Hits and Salary", xlab="Hits", ylab="Salary",pch = 20)
+abline(slm.fit, col="blue", lwd=2)
+```
+
+```{r}
+predicted = predict(slm.fit, data)
+RSS = sum((data$Salary - predicted)^2)
+RSS
+mean = mean(data$Salary)
+TSS = sum((data$Salary - mean)^2)
+R2 = 1-RSS/TSS
+R2
+```
+<div>Answer:</div>
+The regression coefficients and standard errors are shown above. RSS is 43058621, R^2 is 0.1924355.
+This linear regression fits the data in some way, because it follows that the larger the Hits is, the larger Salary is. Also, there are sufficient points having a tedency to spread around the linear regression. However, due to the obviously high variability of the data, many outliers dispersedly distribute in the graph. We can also conclude from the small R^2 that this line does not fit well in some way. Thus, salary may not only depend on Hits, but may depend on other factors which will be discussed in Q2.
+
+
+### Q2
+```{r}
+slm_mult =lm(Salary ~ Hits + Walks + PutOuts +  CHits,data=data)
+summary(slm_mult)$coefficients[,1:2]
+```
+```{r}
+predicted_mult = predict(slm_mult, data)
+RSS_mult = sum((data$Salary - predicted_mult)^2)
+RSS_mult
+TSS_mult = sum((data$Salary - mean)^2 )
+R2_mult = 1-RSS_mult/TSS_mult
+R2_mult
+```
+```{r}
+summary(slm_mult)$coefficients[,3:4]
+summary(slm_mult)$coefficients[,4] < 0.05
+```
+<div>Answer:</div>
+The regression coefficients and standard errors are shown above. RSS is 29223384. R^2 is 0.4519154.T_statstics for all four coefficients are Hits Walks PutOuts CHits 3.176960 2.856501 3.446172 9.328047, and we reject null hypotheses for all four coefficients(meaning they are not equal to zero).
+
+
+
+### Q3
+```{r}
+p = 4
+p0 = 1
+n = nrow(data)
+F_stat = ((RSS-RSS_mult)/(p-p0))/(RSS_mult/(n-p-1))
+F_stat
+p = pf(F_stat, p-p0, n-p-1, lower.tail = FALSE)
+p
+```
+<div>Answer:</div>
+In model 2, R^2 of multivariate regression is greater and RSS of multivariate regression is smaller. Thus, the model 2 is better than the model 1. As p_value is 1.417223e-21, which is really small, we reject the null hypothesis that a subset of the covariates have zero regression coefficients. Thus, multivariate regression is better.
+
