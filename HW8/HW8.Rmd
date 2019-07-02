@@ -1,0 +1,67 @@
+---
+title: "HW8"
+output: html_document
+---
+<div>Runye Hu A13410385</div>
+<div>Yijie Fan A13485989</div>
+<div>Xinyi He A13561164</div>
+<div>Yifan Wu A14060535</div>
+<div>Yiwen Cai A13530685</div>
+
+
+```{r}
+set.seed(123)
+#data <- read.csv("Boston.csv")
+library(MASS)
+data(Boston)
+data <- Boston
+```
+### Q1
+```{r}
+size = nrow(data)
+train_index = sort(sample.int(size,size/2))
+train_set = data[train_index,]
+test_set = data[-train_index,]
+```
+
+### Q2
+```{r}
+library(tree)
+tree_train = tree(medv~.,train_set)
+cv_tree = cv.tree(tree_train, K = 6)
+plot(cv_tree$size, cv_tree$dev, type = "b", xlab = "Size",ylab = "CV MSE", col = "red")
+cv_size=cv_tree$size[which.min(cv_tree$dev)]
+prune_tree = prune.tree(tree_train, best=cv_size)
+plot(tree_train)
+text(tree_train, pretty=0)
+plot(prune_tree)
+text(prune_tree, pretty = 0)
+summary(cv_tree)
+```
+
+```{r}
+y_tree = predict(tree_train, newdata = test_set)
+y_prune = predict(prune_tree, newdata = test_set)
+y = test_set$medv
+MSE_tree = mean((y_tree - y)^2)
+MSE_tree
+MSE_prune = mean((y_prune - y)^2)
+MSE_prune
+```
+### Q3
+```{r}
+library(ipred)
+bagging <- bagging(medv~ .,train_set, nbagg=100 , method = "standard",coob=TRUE)
+y_bagging = predict(bagging, newdata = test_set)
+MSE_bagging = mean((y_bagging - y)^2)
+MSE_bagging
+```
+
+```{r}
+library(randomForest)
+random = randomForest(medv~., train_set, mtry = 4, ntree = 100)
+y_random = predict(random, test_set)
+MSE_random = mean((y_random - y)^2)
+MSE_random
+```
+MSEs for both bagging and random forest are smaller than the MSE of single regression tree, and random forest gives out a better result.
